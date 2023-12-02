@@ -19,26 +19,23 @@ type cubes struct {
 	Green int
 }
 
+// Max per game
+var mc = cubes{
+	Red:   12,
+	Green: 13,
+	Blue:  14,
+}
+
 func TwoOne(o config.Options) int {
-	// Max per game
-	mc := cubes{
-		Red:   12,
-		Green: 13,
-		Blue:  14,
-	}
-
-	results := make(map[int]bool)
-
 	scanner, file := utils.OpenFile(2023, 2, o)
 	defer file.Close()
 
+	var results, count = make(map[int]bool), 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
-
 		parseLineOne(line, results, mc)
 	}
-
-	count := 0
 
 	for k, v := range results {
 		if v {
@@ -53,16 +50,12 @@ func TwoTwo(o config.Options) int {
 	scanner, file := utils.OpenFile(2023, 2, o)
 	defer file.Close()
 
-	results := make(map[int]int)
+	var results, count = make(map[int]int), 0
 
 	for scanner.Scan() {
-
 		line := scanner.Text()
-
 		parseLineTwo(line, results)
 	}
-
-	count := 0
 
 	for _, v := range results {
 		count += v
