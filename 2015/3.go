@@ -2,6 +2,8 @@ package _2015
 
 import (
 	"fmt"
+
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
@@ -10,7 +12,7 @@ type Point struct {
 	y int
 }
 
-func ThreeOne() int {
+func ThreeOne(o config.Options) int {
 	cur := Point{
 		x: 0,
 		y: 0,
@@ -20,7 +22,7 @@ func ThreeOne() int {
 
 	visit(&cur, &visits)
 
-	scanner, file := utils.OpenFile(2015, 3)
+	scanner, file := utils.OpenFile(2015, 3, o)
 	defer file.Close()
 
 	for scanner.Scan() {
@@ -37,7 +39,7 @@ func ThreeOne() int {
 	return len(visits)
 }
 
-func ThreeTwo() int {
+func ThreeTwo(o config.Options) int {
 	scur := Point{
 		x: 0,
 		y: 0,
@@ -53,7 +55,7 @@ func ThreeTwo() int {
 	visit(&scur, &visits)
 	visit(&rscur, &visits)
 
-	scanner, file := utils.OpenFile(2015, 3)
+	scanner, file := utils.OpenFile(2015, 3, o)
 	defer file.Close()
 
 	for scanner.Scan() {

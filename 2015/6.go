@@ -6,6 +6,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
@@ -22,8 +23,8 @@ type action struct {
 
 const GRID_SIZE = 1000
 
-func SixOne() int {
-	scanner, file := utils.OpenFile(2015, 6)
+func SixOne(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 6, o)
 	defer file.Close()
 
 	grid := buildBoolGrid()
@@ -38,8 +39,8 @@ func SixOne() int {
 	return countLights(&grid)
 }
 
-func SixTwo() int {
-	scanner, file := utils.OpenFile(2015, 6)
+func SixTwo(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 6, o)
 	defer file.Close()
 
 	grid := buildIntGrid()

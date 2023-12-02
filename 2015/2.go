@@ -6,12 +6,13 @@ import (
 
 	"strconv"
 
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
-func TwoOne() int {
+func TwoOne(o config.Options) int {
 	var total int
-	scanner, file := utils.OpenFile(2015, 2)
+	scanner, file := utils.OpenFile(2015, 2, o)
 	defer file.Close()
 
 	for scanner.Scan() {
@@ -37,9 +38,9 @@ func TwoOne() int {
 	return total
 }
 
-func TwoTwo() int {
+func TwoTwo(o config.Options) int {
 	var total int
-	scanner, file := utils.OpenFile(2015, 2)
+	scanner, file := utils.OpenFile(2015, 2, o)
 	defer file.Close()
 
 	for scanner.Scan() {

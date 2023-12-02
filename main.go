@@ -7,11 +7,14 @@ import (
 	_2015 "github.com/pauldolden/advent-go/2015"
 	_2016 "github.com/pauldolden/advent-go/2016"
 	_2023 "github.com/pauldolden/advent-go/2023"
+	"github.com/pauldolden/advent-go/config"
 )
 
 func main() {
 	year := flag.Int("year", 2015, "Year to run")
 	day := flag.Int("day", 1, "Day to run")
+
+	o := config.NewDefaultOptions()
 
 	flag.Parse()
 
@@ -21,25 +24,25 @@ func main() {
 	case 2015:
 		switch *day {
 		case 1:
-			fmt.Println(_2015.OneOne())
-			fmt.Println(_2015.OneTwo())
+			fmt.Println(_2015.OneOne(o))
+			fmt.Println(_2015.OneTwo(o))
 		case 2:
-			fmt.Println(_2015.TwoOne())
-			fmt.Println(_2015.TwoTwo())
+			fmt.Println(_2015.TwoOne(o))
+			fmt.Println(_2015.TwoTwo(o))
 		case 3:
-			fmt.Println(_2015.ThreeOne())
-			fmt.Println(_2015.ThreeTwo())
+			fmt.Println(_2015.ThreeOne(o))
+			fmt.Println(_2015.ThreeTwo(o))
 		case 4:
 			fmt.Println(_2015.FourOne())
 			fmt.Println(_2015.FourTwo())
 		case 5:
-			fmt.Println(_2015.FiveOne())
-			fmt.Println(_2015.FiveTwo())
+			fmt.Println(_2015.FiveOne(o))
+			fmt.Println(_2015.FiveTwo(o))
 		case 6:
-			fmt.Println(_2015.SixOne())
-			fmt.Println(_2015.SixTwo())
+			fmt.Println(_2015.SixOne(o))
+			fmt.Println(_2015.SixTwo(o))
 		case 7:
-			fmt.Println(_2015.SevenOne())
+			fmt.Println(_2015.SevenOne(o))
 			fmt.Println(_2015.SevenTwo())
 		case 8:
 			fmt.Println(_2015.EightOne())
@@ -177,8 +180,11 @@ func main() {
 	case 2023:
 		switch *day {
 		case 1:
-			// fmt.Println(_2023.OneOne())
-			fmt.Println(_2023.OneTwo())
+			fmt.Println(_2023.OneOne(o))
+			fmt.Println(_2023.OneTwo(o))
+		case 2:
+			fmt.Println(_2023.TwoOne(o))
+			fmt.Println(_2023.TwoTwo(o))
 		}
 
 	default:

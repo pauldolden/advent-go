@@ -1,14 +1,15 @@
 package _2015
 
 import (
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
 var vowels = []string{"a", "e", "i", "o", "u"}
 var badStrings = []string{"ab", "cd", "pq", "xy"}
 
-func FiveOne() int {
-	scanner, file := utils.OpenFile(2015, 5)
+func FiveOne(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 5, o)
 	defer file.Close()
 
 	type conditions struct {
@@ -52,8 +53,8 @@ func FiveOne() int {
 	return len(nice)
 }
 
-func FiveTwo() int {
-	scanner, file := utils.OpenFile(2015, 5)
+func FiveTwo(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 5, o)
 	defer file.Close()
 
 	niceCount := 0

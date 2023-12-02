@@ -1,11 +1,12 @@
 package _2015
 
 import (
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
-func OneOne() int {
-	scanner, file := utils.OpenFile(2015, 1)
+func OneOne(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 1, o)
 	defer file.Close()
 
 	var floor int
@@ -23,8 +24,8 @@ func OneOne() int {
 	return floor
 }
 
-func OneTwo() int {
-	scanner, file := utils.OpenFile(2015, 1)
+func OneTwo(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 1, o)
 	defer file.Close()
 
 	var floor int

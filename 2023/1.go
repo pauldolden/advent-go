@@ -5,11 +5,12 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
 )
 
-func OneOne() int {
-	scanner, file := utils.OpenFile(2023, 1)
+func OneOne(o config.Options) int {
+	scanner, file := utils.OpenFile(2023, 1, o)
 	defer file.Close()
 
 	count := 0
@@ -24,8 +25,8 @@ func OneOne() int {
 	return count
 }
 
-func OneTwo() int {
-	scanner, file := utils.OpenFile(2023, 1)
+func OneTwo(o config.Options) int {
+	scanner, file := utils.OpenFile(2023, 1, o)
 	defer file.Close()
 
 	count := 0
@@ -33,8 +34,6 @@ func OneTwo() int {
 	for scanner.Scan() {
 		line := scanner.Text()
 		number := findNumbersTwo(line)
-
-		fmt.Println(number, line)
 
 		count += number
 	}
