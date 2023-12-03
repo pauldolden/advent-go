@@ -71,7 +71,6 @@ func findCommand(s string) string {
 		fmt.Println("Error compiling regex:", err)
 	}
 
-	// Find all matches
 	matches := regex.FindAllString(s, -1)
 
 	if len(matches) > 0 {
