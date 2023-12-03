@@ -1,11 +1,10 @@
 package _2023
 
 import (
-	"regexp"
-	"strconv"
-
 	"github.com/pauldolden/advent-go/config"
 	"github.com/pauldolden/advent-go/utils"
+	"regexp"
+	"strconv"
 )
 
 type xLocation struct {
@@ -57,7 +56,6 @@ func ThreeOne(o config.Options) int {
 		}
 		lineNumber++
 	}
-
 	count := 0
 main:
 	for _, num := range partNumbers {
@@ -130,12 +128,10 @@ func ThreeTwo(o config.Options) int {
 
 			partNumbers = append(partNumbers, pn)
 		}
-
 		lineNumber++
 	}
 
 	gears := make(map[[2]int][]int)
-	count := 0
 main:
 	for _, num := range partNumbers {
 		beforeKey := [2]int{num.y, num.x.start - 1}
@@ -169,8 +165,6 @@ main:
 			if _, ok := symbolMap[key]; ok {
 				if symbolMap[key] == "*" {
 					gears[key] = append(gears[key], num.value)
-				} else {
-					count += num.value
 				}
 				continue main
 			}
