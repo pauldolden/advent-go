@@ -14,10 +14,9 @@ type xLocation struct {
 }
 
 type partNumber struct {
-	length int
-	value  int
-	x      xLocation
-	y      int
+	value int
+	x     xLocation
+	y     int
 }
 
 func ThreeOne(o config.Options) int {
@@ -25,7 +24,7 @@ func ThreeOne(o config.Options) int {
 	defer file.Close()
 
 	numberRegex := regexp.MustCompile("[0-9]+")
-	symbolRegex := regexp.MustCompile("[^\\w.]")
+	symbolRegex := regexp.MustCompile(`[^\w.]`)
 
 	symbolMap := make(map[[2]int]string)
 	partNumbers := []partNumber{}
@@ -40,7 +39,9 @@ func ThreeOne(o config.Options) int {
 		for _, sym := range symbols {
 			s := sym[0]
 
-			symbolMap[[2]int{lineNumber, s}] = string(line[s])
+			if string(line[s]) == "*" {
+				symbolMap[[2]int{lineNumber, s}] = string(line[s])
+			}
 		}
 
 		for _, number := range numbers {
@@ -48,13 +49,11 @@ func ThreeOne(o config.Options) int {
 
 			ns := line[s:e]
 
-			l := len(ns)
 			n, _ := strconv.Atoi(ns)
 
 			pn := partNumber{
-				length: l,
-				value:  n,
-				y:      lineNumber,
+				value: n,
+				y:     lineNumber,
 				x: xLocation{
 					start: s,
 					end:   e,
@@ -88,6 +87,7 @@ main:
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y - 1, i}
 			if _, ok := symbolMap[key]; ok {
+
 				count += num.value
 				continue main
 			}
@@ -111,7 +111,7 @@ func ThreeTwo(o config.Options) int {
 	defer file.Close()
 
 	numberRegex := regexp.MustCompile("[0-9]+")
-	symbolRegex := regexp.MustCompile("[^\\w.]")
+	symbolRegex := regexp.MustCompile(`[^\w.]`)
 
 	symbolMap := make(map[[2]int]string)
 	partNumbers := []partNumber{}
@@ -134,13 +134,11 @@ func ThreeTwo(o config.Options) int {
 
 			ns := line[s:e]
 
-			l := len(ns)
 			n, _ := strconv.Atoi(ns)
 
 			pn := partNumber{
-				length: l,
-				value:  n,
-				y:      lineNumber,
+				value: n,
+				y:     lineNumber,
 				x: xLocation{
 					start: s,
 					end:   e,
@@ -153,6 +151,7 @@ func ThreeTwo(o config.Options) int {
 		lineNumber++
 	}
 
+	gears := make(map[[2]int][]int)
 	count := 0
 main:
 	for _, num := range partNumbers {
@@ -161,18 +160,24 @@ main:
 
 		// Matches symbols immediately before or after
 		if _, ok := symbolMap[beforeKey]; ok {
-			count += num.value
+			if symbolMap[beforeKey] == "*" {
+				gears[beforeKey] = append(gears[beforeKey], num.value)
+			}
 			continue main
 		}
 		if _, ok := symbolMap[afterKey]; ok {
-			count += num.value
+			if symbolMap[afterKey] == "*" {
+				gears[afterKey] = append(gears[afterKey], num.value)
+			}
 			continue main
 		}
 		// Matches line above
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y - 1, i}
 			if _, ok := symbolMap[key]; ok {
-				count += num.value
+				if symbolMap[key] == "*" {
+					gears[key] = append(gears[key], num.value)
+				}
 				continue main
 			}
 		}
@@ -180,11 +185,22 @@ main:
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y + 1, i}
 			if _, ok := symbolMap[key]; ok {
-				count += num.value
+				if symbolMap[key] == "*" {
+					gears[key] = append(gears[key], num.value)
+				} else {
+					count += num.value
+				}
 				continue main
 			}
 		}
 	}
 
-	return count
+	gearCount := 0
+	for _, gear := range gears {
+		if len(gear) == 2 {
+			gearCount += gear[0] * gear[1]
+		}
+	}
+
+	return gearCount
 }
