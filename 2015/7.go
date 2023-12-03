@@ -10,11 +10,17 @@ import (
 	"github.com/pauldolden/advent-go/utils"
 )
 
+type operation struct {
+	destination string
+	operands    []string
+	operator    string
+}
+
 func SevenOne(o config.Options) int {
 	scanner, file := utils.OpenFile(2015, 7, o)
 	defer file.Close()
 
-	operations := make(map[string][]string)
+	operations := make(map[string]operation)
 	values := make(map[string]int)
 
 	for scanner.Scan() {
@@ -24,43 +30,38 @@ func SevenOne(o config.Options) int {
 		mapDependantOperations(operation, operations, values)
 	}
 
-	for k := range operations {
-		computeWireValue(k, operations, values)
+	for _, o := range operations {
+		computeWireValue(o.destination, operations, values)
 	}
 
-	return 0
+	return values["a"]
 }
 
 func SevenTwo() int {
 	return 0
 }
 
-type operation struct {
-	destination string
-	expression  string
-}
-
 func parseOperation(s string) operation {
 	var o operation
 	ss := strings.Split(s, "->")
 
-	o.expression = strings.TrimSpace(ss[0])
+	expression := strings.TrimSpace(ss[0])
+	o.operands = findOperands(expression)
+	o.operator = findCommand(expression)
 	o.destination = strings.TrimSpace(ss[1])
 
 	return o
 }
 
-func mapDependantOperations(o operation, dm map[string][]string, vm map[string]int) {
-	operands := findOperands(o.expression)
-
-	if len(operands) == 1 {
-		if num, err := strconv.Atoi(operands[0]); err == nil {
+func mapDependantOperations(o operation, dm map[string]operation, vm map[string]int) {
+	if len(o.operands) == 1 {
+		if num, err := strconv.Atoi(o.operands[0]); err == nil {
 			vm[o.destination] = num
 			return
 		}
 	}
 
-	dm[o.destination] = operands
+	dm[o.destination] = o
 }
 
 func findCommand(s string) string {
@@ -95,17 +96,38 @@ func findOperands(s string) []string {
 	return o
 }
 
-func computeWireValue(w string, dm map[string][]string, vm map[string]int) int {
-	val, ok := vm[w]
-
-	if ok {
+func computeWireValue(w string, dm map[string]operation, vm map[string]int) int {
+	if val, ok := vm[w]; ok {
 		return val
-	} else {
-		for _, v := range dm[w] {
-			if v == "b" {
-				fmt.Println(w)
-			}
+	}
+
+	op := dm[w]
+	switch op.operator {
+	case "NOT":
+		operandVal := getOperandValue(op.operands[0], dm, vm)
+		vm[w] = ^operandVal
+	case "AND":
+		vm[w] = getOperandValue(op.operands[0], dm, vm) & getOperandValue(op.operands[1], dm, vm)
+	case "OR":
+		vm[w] = getOperandValue(op.operands[0], dm, vm) | getOperandValue(op.operands[1], dm, vm)
+	case "LSHIFT":
+		vm[w] = getOperandValue(op.operands[0], dm, vm) << getOperandValue(op.operands[1], dm, vm)
+	case "RSHIFT":
+		vm[w] = getOperandValue(op.operands[0], dm, vm) >> getOperandValue(op.operands[1], dm, vm)
+	default:
+		if val, err := strconv.Atoi(op.operands[0]); err == nil {
+			vm[w] = val
+		} else {
+			vm[w] = computeWireValue(op.operands[0], dm, vm)
 		}
 	}
-	return 0
+
+	return vm[w]
+}
+
+func getOperandValue(operand string, dm map[string]operation, vm map[string]int) int {
+	if val, err := strconv.Atoi(operand); err == nil {
+		return val // It's a number
+	}
+	return computeWireValue(operand, dm, vm) // It's a wire
 }
