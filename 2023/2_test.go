@@ -7,10 +7,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var o = config.NewTestOptions()
-
 func TestTwoOne(t *testing.T) {
+	o := config.NewTestOptions()
 	res := TwoOne(o)
 
 	assert.Equal(t, 8, res, "Should be equal")
+}
+
+func TestTwoTwo(t *testing.T) {
+	o := config.NewTestOptions()
+	res := TwoTwo(o)
+
+	assert.Equal(t, 2286, res, "Should be equal")
 }

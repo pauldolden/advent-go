@@ -12,7 +12,11 @@ import (
 func OpenFile(year int, day int, o config.Options) (*bufio.Scanner, *os.File) {
 	var path string
 	if o.Test {
-		path = fmt.Sprintf("./%d/%d_test.txt", year, day)
+		if o.SplitInputs {
+			path = fmt.Sprintf("./%d_test_%d.txt", day, o.TestPart)
+		} else {
+			path = fmt.Sprintf("./%d_test.txt", day)
+		}
 	} else {
 		path = fmt.Sprintf("./%d/%d.txt", year, day)
 	}
