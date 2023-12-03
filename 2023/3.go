@@ -38,15 +38,11 @@ func ThreeOne(o config.Options) int {
 
 		for _, sym := range symbols {
 			s := sym[0]
-
 			symbolMap[[2]int{lineNumber, s}] = string(line[s])
 		}
-
 		for _, number := range numbers {
 			s, e := number[0], number[len(number)-1]
-
 			ns := line[s:e]
-
 			n, _ := strconv.Atoi(ns)
 
 			pn := partNumber{
@@ -57,20 +53,16 @@ func ThreeOne(o config.Options) int {
 					end:   e,
 				},
 			}
-
 			partNumbers = append(partNumbers, pn)
 		}
-
 		lineNumber++
 	}
 
 	count := 0
-
 main:
 	for _, num := range partNumbers {
 		beforeKey := [2]int{num.y, num.x.start - 1}
 		afterKey := [2]int{num.y, num.x.end}
-
 		// Matches symbols immediately before or after
 		if _, ok := symbolMap[beforeKey]; ok {
 			count += num.value
@@ -80,7 +72,6 @@ main:
 			count += num.value
 			continue main
 		}
-
 		// Matches line above
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y - 1, i}
@@ -89,7 +80,6 @@ main:
 				continue main
 			}
 		}
-
 		// Matches line below
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y + 1, i}
@@ -99,14 +89,12 @@ main:
 			}
 		}
 	}
-
 	return count
 }
 
 func ThreeTwo(o config.Options) int {
 	scanner, file := utils.OpenFile(2023, 3, o)
 	defer file.Close()
-
 	numberRegex := regexp.MustCompile("[0-9]+")
 	symbolRegex := regexp.MustCompile(`[^\w.]`)
 
@@ -124,18 +112,13 @@ func ThreeTwo(o config.Options) int {
 			s := sym[0]
 
 			if string(line[s]) == "*" {
-
 				symbolMap[[2]int{lineNumber, s}] = string(line[s])
 			}
 		}
-
 		for _, number := range numbers {
 			s, e := number[0], number[len(number)-1]
-
 			ns := line[s:e]
-
 			n, _ := strconv.Atoi(ns)
-
 			pn := partNumber{
 				value: n,
 				y:     lineNumber,
@@ -157,7 +140,6 @@ main:
 	for _, num := range partNumbers {
 		beforeKey := [2]int{num.y, num.x.start - 1}
 		afterKey := [2]int{num.y, num.x.end}
-
 		// Matches symbols immediately before or after
 		if _, ok := symbolMap[beforeKey]; ok {
 			if symbolMap[beforeKey] == "*" {
@@ -201,6 +183,5 @@ main:
 			gearCount += gear[0] * gear[1]
 		}
 	}
-
 	return gearCount
 }
