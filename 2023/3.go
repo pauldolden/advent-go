@@ -39,9 +39,7 @@ func ThreeOne(o config.Options) int {
 		for _, sym := range symbols {
 			s := sym[0]
 
-			if string(line[s]) == "*" {
-				symbolMap[[2]int{lineNumber, s}] = string(line[s])
-			}
+			symbolMap[[2]int{lineNumber, s}] = string(line[s])
 		}
 
 		for _, number := range numbers {
@@ -87,7 +85,6 @@ main:
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y - 1, i}
 			if _, ok := symbolMap[key]; ok {
-
 				count += num.value
 				continue main
 			}
@@ -126,7 +123,10 @@ func ThreeTwo(o config.Options) int {
 		for _, sym := range symbols {
 			s := sym[0]
 
-			symbolMap[[2]int{lineNumber, s}] = string(line[s])
+			if string(line[s]) == "*" {
+
+				symbolMap[[2]int{lineNumber, s}] = string(line[s])
+			}
 		}
 
 		for _, number := range numbers {
