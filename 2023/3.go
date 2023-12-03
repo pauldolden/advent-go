@@ -168,7 +168,6 @@ main:
 			count += num.value
 			continue main
 		}
-
 		// Matches line above
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y - 1, i}
@@ -177,7 +176,6 @@ main:
 				continue main
 			}
 		}
-
 		// Matches line below
 		for i := num.x.start - 1; i <= num.x.end; i++ {
 			key := [2]int{num.y + 1, i}
