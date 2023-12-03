@@ -43,7 +43,7 @@ func main() {
 			fmt.Println(_2015.SixTwo(o))
 		case 7:
 			fmt.Println(_2015.SevenOne(o))
-			fmt.Println(_2015.SevenTwo())
+			fmt.Println(_2015.SevenTwo(o))
 		case 8:
 			fmt.Println(_2015.EightOne())
 			fmt.Println(_2015.EightTwo())

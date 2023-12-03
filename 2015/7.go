@@ -37,8 +37,37 @@ func SevenOne(o config.Options) int {
 	return values["a"]
 }
 
-func SevenTwo() int {
-	return 0
+func SevenTwo(o config.Options) int {
+	scanner, file := utils.OpenFile(2015, 7, o)
+	defer file.Close()
+
+	operations := make(map[string]operation)
+	values := make(map[string]int)
+	valuesTwo := make(map[string]int)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		operation := parseOperation(line)
+		mapDependantOperations(operation, operations, values)
+
+	}
+
+	for k, v := range values {
+		valuesTwo[k] = v
+	}
+
+	for _, o := range operations {
+		computeWireValue(o.destination, operations, values)
+	}
+
+	valuesTwo["b"] = values["a"]
+
+	for _, o := range operations {
+		computeWireValue(o.destination, operations, valuesTwo)
+	}
+
+	return valuesTwo["a"]
 }
 
 func parseOperation(s string) operation {
