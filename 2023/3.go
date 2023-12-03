@@ -68,7 +68,6 @@ func ThreeOne(o config.Options) int {
 	}
 
 	count := 0
-	added := []int{}
 
 main:
 	for _, num := range partNumbers {
@@ -99,7 +98,6 @@ main:
 			key := [2]int{num.y + 1, i}
 			if _, ok := symbolMap[key]; ok {
 				count += num.value
-				added = append(added, num.value)
 				continue main
 			}
 		}
@@ -156,7 +154,6 @@ func ThreeTwo(o config.Options) int {
 	}
 
 	count := 0
-	added := []int{}
 main:
 	for _, num := range partNumbers {
 		beforeKey := [2]int{num.y, num.x.start - 1}
@@ -165,12 +162,10 @@ main:
 		// Matches symbols immediately before or after
 		if _, ok := symbolMap[beforeKey]; ok {
 			count += num.value
-			added = append(added, num.value)
 			continue main
 		}
 		if _, ok := symbolMap[afterKey]; ok {
 			count += num.value
-			added = append(added, num.value)
 			continue main
 		}
 
@@ -179,7 +174,6 @@ main:
 			key := [2]int{num.y - 1, i}
 			if _, ok := symbolMap[key]; ok {
 				count += num.value
-				added = append(added, num.value)
 				continue main
 			}
 		}
@@ -189,7 +183,6 @@ main:
 			key := [2]int{num.y + 1, i}
 			if _, ok := symbolMap[key]; ok {
 				count += num.value
-				added = append(added, num.value)
 				continue main
 			}
 		}
