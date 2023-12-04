@@ -88,15 +88,12 @@ func FourTwo(o config.Options) int {
 	}
 
 	for _, c := range mapOfCards {
-
 		cards := c.playTwo(mapOfCards)
 
 		finalCards = append(finalCards, cards...)
 	}
 
-	fmt.Println(len(finalCards))
-
-	return 0
+	return len(finalCards)
 }
 
 func parseLine(s string) card {
