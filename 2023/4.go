@@ -1,9 +1,11 @@
 package _2023
 
 import (
+	"fmt"
 	"math"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/pauldolden/advent-go/config"
@@ -11,7 +13,7 @@ import (
 )
 
 type card struct {
-	id             string
+	id             int
 	winningNumbers []string
 	gameNumbers    []string
 	numberOfWins   int
@@ -30,13 +32,28 @@ func (c *card) calculateNumberOfWins() {
 	}
 }
 
+func cloneCards(c *card, m map[int]card) []card {
+	var cards []card
+	c.calculateNumberOfWins()
+	cards = append(cards, *c)
+
+	for i := 1; i <= c.numberOfWins; i++ {
+		newCard := m[c.id+i]
+		newCardCards := cloneCards(&newCard, m)
+
+		cards = append(cards, newCardCards...)
+	}
+
+	return cards
+}
+
 func (c *card) playOne() {
 	c.calculateNumberOfWins()
 	c.calculatePoints()
 }
 
-func (c *card) playTwo() {
-	c.calculateNumberOfWins()
+func (c *card) playTwo(m map[int]card) []card {
+	return cloneCards(c, m)
 }
 
 func FourOne(o config.Options) int {
@@ -59,14 +76,26 @@ func FourOne(o config.Options) int {
 func FourTwo(o config.Options) int {
 	scanner, file := utils.OpenFile(2023, 4, o)
 	defer file.Close()
+	mapOfCards := make(map[int]card)
+	finalCards := []card{}
 
 	for scanner.Scan() {
 		line := scanner.Text()
 
 		gameCard := parseLine(line)
 
-		gameCard.playTwo()
+		mapOfCards[gameCard.id] = gameCard
 	}
+
+	for _, c := range mapOfCards {
+
+		cards := c.playTwo(mapOfCards)
+
+		finalCards = append(finalCards, cards...)
+	}
+
+	fmt.Println(len(finalCards))
+
 	return 0
 }
 
@@ -76,8 +105,10 @@ func parseLine(s string) card {
 	idRegex, _ := regexp.Compile("[0-9]+")
 	gameBlock := strings.Split(ss[0], ":")
 
-	id, winningNumbersString := idRegex.FindString(gameBlock[0]), gameBlock[1]
+	idString, winningNumbersString := idRegex.FindString(gameBlock[0]), gameBlock[1]
 	gameNumbersString := ss[1]
+
+	id, _ := strconv.Atoi(idString)
 
 	gameNumbersSlice := strings.Fields(gameNumbersString)
 	winningNumbersSlice := strings.Fields(winningNumbersString)
