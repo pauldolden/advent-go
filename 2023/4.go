@@ -1,7 +1,6 @@
 package _2023
 
 import (
-	"fmt"
 	"math"
 	"regexp"
 	"slices"
