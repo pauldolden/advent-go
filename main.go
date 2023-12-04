@@ -45,7 +45,7 @@ func main() {
 			fmt.Println(_2015.SevenOne(o))
 			fmt.Println(_2015.SevenTwo(o))
 		case 8:
-			fmt.Println(_2015.EightOne())
+			fmt.Println(_2015.EightOne(o))
 			fmt.Println(_2015.EightTwo())
 		case 9:
 			fmt.Println(_2015.NineOne())
@@ -188,6 +188,9 @@ func main() {
 		case 3:
 			fmt.Println(_2023.ThreeOne(o))
 			fmt.Println(_2023.ThreeTwo(o))
+		case 4:
+			fmt.Println(_2023.FourOne(o))
+			fmt.Println(_2023.FourTwo(o))
 		}
 
 	default:
