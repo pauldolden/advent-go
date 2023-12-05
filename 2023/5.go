@@ -69,7 +69,7 @@ func findLocation(v int, rm []resourceMap, index int) int {
 	m := rm[index]
 
 	for _, r := range m.resources {
-		if v >= r.sourceStart && v <= r.sourceStart+r.length {
+		if v >= r.sourceStart && v < r.sourceStart+r.length {
 			v = r.destStart + (v - r.sourceStart)
 			break
 		}
