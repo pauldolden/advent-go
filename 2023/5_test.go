@@ -10,14 +10,14 @@ import (
 
 func TestFiveOne(t *testing.T) {
 	o := config.NewTestOptions()
-	res := FourOne(o)
+	res := FiveOne(o)
 
 	assert.Equal(t, 35, res, "Should be equal")
 }
 
 func TestFiveTwo(t *testing.T) {
 	o := config.NewTestOptions()
-	res := FourTwo(o)
+	res := FiveTwo(o)
 
 	assert.Equal(t, 30, res, "Should be equal")
 }

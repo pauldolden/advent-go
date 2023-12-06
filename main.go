@@ -194,6 +194,9 @@ func main() {
 		case 5:
 			fmt.Println(_2023.FiveOne(o))
 			fmt.Println(_2023.FiveTwo(o))
+		case 6:
+			fmt.Println(_2023.SixOne(o))
+			fmt.Println(_2023.SixTwo(o))
 		}
 
 	default:
