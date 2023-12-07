@@ -1,7 +1,6 @@
 package _2023
 
 import (
-	"fmt"
 	"slices"
 	"sort"
 	"strconv"
@@ -11,7 +10,8 @@ import (
 	"github.com/pauldolden/advent-go/utils"
 )
 
-var CARDS = []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"}
+var CARDS_ONE = []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"}
+var CARDS_TWO = []string{"J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"}
 
 type hand struct {
 	rawHand                string
@@ -68,18 +68,16 @@ func SevenOne(o config.Options) int {
 		bidInt, _ := strconv.Atoi(bid)
 
 		for _, card := range cards {
-			// find index of card in CARDS
-			idx := slices.Index(CARDS, string(card))
-			// add score to cardsScores
+			idx := slices.Index(CARDS_ONE, string(card))
 			cardsScores = append(cardsScores, idx)
 			instanceCount[string(card)]++
 		}
 
 		for _, count := range instanceCount {
 			if count > hand.maxInstanceCount {
-				hand.secondMaxInstanceCount = hand.maxInstanceCount // Update second max before updating max
+				hand.secondMaxInstanceCount = hand.maxInstanceCount
 				hand.maxInstanceCount = count
-			} else if count > hand.secondMaxInstanceCount && count < hand.maxInstanceCount {
+			} else if count > hand.secondMaxInstanceCount && count <= hand.maxInstanceCount {
 				hand.secondMaxInstanceCount = count
 			}
 		}
@@ -93,11 +91,8 @@ func SevenOne(o config.Options) int {
 
 	sort.Sort(ByPriority(hands))
 
-	total := 0
+	var total int
 	for idx, hand := range hands {
-		fmt.Println("======")
-		fmt.Println(hand)
-		fmt.Println(idx+1, "x", hand.bid, "=", hand.bid*(idx+1))
 		total += hand.bid * (idx + 1)
 	}
 
@@ -105,5 +100,55 @@ func SevenOne(o config.Options) int {
 }
 
 func SevenTwo(o config.Options) int {
-	return 0
+	scanner, file := utils.OpenFile(2023, 7, o)
+	defer file.Close()
+	var hands []hand
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		var hand hand
+		instanceCount := make(map[string]int)
+		cardsScores := []int{}
+		input := strings.Fields(line)
+		cards, bid := input[0], input[1]
+		bidInt, _ := strconv.Atoi(bid)
+
+		for _, card := range cards {
+			idx := slices.Index(CARDS_TWO, string(card))
+			cardsScores = append(cardsScores, idx)
+			instanceCount[string(card)]++
+		}
+
+		numberOfJokers := instanceCount["J"]
+		// remove jokers from instanceCount
+		delete(instanceCount, "J")
+
+		for _, count := range instanceCount {
+			if count > hand.maxInstanceCount {
+				hand.secondMaxInstanceCount = hand.maxInstanceCount
+				hand.maxInstanceCount = count
+			} else if count > hand.secondMaxInstanceCount && count <= hand.maxInstanceCount {
+				hand.secondMaxInstanceCount = count
+			}
+		}
+
+		// Add jokers to maxInstanceCount
+		if numberOfJokers > 0 {
+			hand.maxInstanceCount += numberOfJokers
+		}
+
+		hand.rawHand = cards
+		hand.bid = bidInt
+		hand.cardScores = cardsScores
+		hands = append(hands, hand)
+	}
+
+	sort.Sort(ByPriority(hands))
+
+	var total int
+	for idx, hand := range hands {
+		total += hand.bid * (idx + 1)
+	}
+
+	return total
 }
