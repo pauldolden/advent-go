@@ -201,7 +201,7 @@ func main() {
 			fmt.Println(_2023.SevenOne(o))
 			fmt.Println(_2023.SevenTwo(o))
 		case 8:
-			// fmt.Println(_2023.EightOne(o))
+			fmt.Println(_2023.EightOne(o))
 			fmt.Println(_2023.EightTwo(o))
 		}
 

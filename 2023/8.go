@@ -74,8 +74,25 @@ func EightTwo(o config.Options) int {
 		}
 	}
 
-	count := walk2(sources, steps, mappingsMap)
-	return count
+	var lengths []int
+
+	for _, source := range sources {
+		lengths = append(lengths, walk2(source, steps, mappingsMap))
+	}
+
+	return lcmSlice(lengths)
+}
+
+func lcmSlice(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+
+	result := nums[0]
+	for _, num := range nums[1:] {
+		result = lcm(result, num)
+	}
+	return result
 }
 
 func walk(
@@ -101,30 +118,20 @@ func walk(
 	return walk(idx+1, newSource, steps, mappingsMap, count)
 }
 
-func walk2(sources []string, steps []string, mappingsMap map[string][]string) int {
+func walk2(source string, steps []string, mappingsMap map[string][]string) int {
 	idx := 0
 	count := 0
 
-	for {
-		if idx >= len(steps) {
-			idx = 0
-		}
+	for source[2] != 'Z' {
 
-		if allEndWithZ(sources) {
-			break
-		}
-
-		var newSources []string
 		count++
 
 		dirIdx := dirMap[steps[idx]]
-		for _, source := range sources {
-			newSource := mappingsMap[source][dirIdx]
-			newSources = append(newSources, newSource)
-		}
+		newSource := mappingsMap[source][dirIdx]
 
-		sources = newSources
-		idx++
+		source = newSource
+
+		idx = (idx + 1) % len(steps)
 	}
 
 	return count
@@ -141,11 +148,15 @@ func parseLine7(input string) (string, []string) {
 	return source, opts
 }
 
-func allEndWithZ(sources []string) bool {
-	for _, source := range sources {
-		if len(source) == 0 || source[len(source)-1] != 'Z' {
-			return false
-		}
+func lcm(a, b int) int {
+	return a * b / gcd(a, b)
+}
+
+func gcd(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
 	}
-	return true
+	return a
 }
