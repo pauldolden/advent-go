@@ -115,7 +115,7 @@ func (l *lens) exists(ls []lens) bool {
 func hash(s string) int {
 	total := 0
 	for _, c := range s {
-		if c == 10 {
+		if c == 10 { // newline
 			continue
 		}
 		total += int(c)
