@@ -9,17 +9,10 @@ import (
 )
 
 func FifteenOne(o config.Options) int {
-	bs, err := os.ReadFile("./2023/15.txt")
-	if err != nil {
-		panic(err)
-	}
-
-	s := string(bs)
-	ss := strings.Split(s, ",")
+	ss := parse()
 
 	total := 0
 	for _, s := range ss {
-		s = strings.TrimSpace(s)
 		total += hash(s)
 	}
 
@@ -27,17 +20,36 @@ func FifteenOne(o config.Options) int {
 }
 
 func FifteenTwo(o config.Options) int {
-	bs, err := os.ReadFile("./2023/15.txt")
-	if err != nil {
-		panic(err)
+	ss := parse()
+	hm := arrange(ss)
+
+	total := 0
+	for i, ls := range hm {
+		for k, l := range ls {
+			total += (i + 1) * (k + 1) * l.value
+		}
 	}
+
+	return total
+}
+
+type lens struct {
+	label string
+	value int
+}
+
+func parse() []string {
+	bs, _ := os.ReadFile("./2023/15.txt")
 
 	s := string(bs)
 	ss := strings.Split(s, ",")
 
+	return ss
+}
+
+func arrange(ss []string) map[int][]lens {
 	hm := make(map[int][]lens)
 
-	total := 0
 	for _, s := range ss {
 		s = strings.TrimSpace(s)
 
@@ -61,20 +73,7 @@ func FifteenTwo(o config.Options) int {
 		}
 	}
 
-	for i, ls := range hm {
-		box := i + 1
-		for k, l := range ls {
-			pos := k + 1
-			total += box * pos * l.value
-		}
-	}
-
-	return total
-}
-
-type lens struct {
-	label string
-	value int
+	return hm
 }
 
 func remove(label string, ls []lens) []lens {
@@ -113,6 +112,7 @@ func (l *lens) exists(ls []lens) bool {
 }
 
 func hash(s string) int {
+	s = strings.TrimSpace(s)
 	total := 0
 	for _, c := range s {
 		if c == 10 { // newline
