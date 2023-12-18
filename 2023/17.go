@@ -115,8 +115,6 @@ func findAdjacentNodes(n node, grid [][]int) []node {
 						dir:      i,
 						dirMoves: n.dirMoves + 1,
 					})
-				} else {
-					continue
 				}
 			} else if isValidDirection(n.dir, i, n.dirMoves) {
 				cellValue := grid[n.r+dir[0]][n.c+dir[1]]
