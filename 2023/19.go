@@ -20,12 +20,9 @@ type condition struct {
 type part struct {
 	x, m, a, s int
 }
-type parttwo struct {
-	x, m, a, s rnge
-}
 
-type rnge struct {
-	min, max int
+type Range struct {
+	low, high int
 }
 
 func NineteenOne(o config.Options) int {
@@ -50,34 +47,71 @@ func NineteenTwo(o config.Options) int {
 	input := strings.Split(string(bs), "\n\n")
 	rw := strings.Split(input[0], "\n")
 
-	return solveTwo(processWorkflows(rw))
-}
+	workflows := processWorkflows(rw)
 
-func solveTwo(workflows map[string][]condition) int {
-	start := workflows["in"]
-	p := parttwo{
-		x: rnge{
-			min: 1,
-			max: 4000,
-		},
-		m: rnge{
-			min: 1,
-			max: 4000,
-		},
-		a: rnge{
-			min: 1,
-			max: 4000,
-		},
-		s: rnge{
-			min: 1,
-			max: 4000,
-		},
+	ranges := make(map[string]Range)
+
+	for _, c := range "xmas" {
+		ranges[string(c)] = Range{1, 4000}
 	}
 
-	fmt.Println(p)
-	fmt.Println(start)
+	return solveTwo("in", workflows, ranges)
+}
 
-	return 1
+func solveTwo(destination string, workflows map[string][]condition, ranges map[string]Range) int {
+	if destination == "R" {
+		return 0
+	}
+	if destination == "A" {
+		product := 1
+		for _, r := range ranges {
+			product *= r.high - r.low + 1
+		}
+		return product
+	}
+
+	total := 0
+
+	for _, c := range workflows[destination] {
+		var T, F Range
+		hi, lo := ranges[c.operand].high, ranges[c.operand].low
+		if c.condition == "<" {
+			T = Range{lo, c.target - 1}
+			F = Range{c.target, hi}
+		} else {
+			T = Range{c.target + 1, hi}
+			F = Range{lo, c.target}
+		}
+
+		if T.low <= T.high {
+			if c.operand == "GOTO" {
+				continue
+			}
+
+			TRanges := make(map[string]Range)
+			for _, r := range ranges {
+				TRanges[string(c.operand)] = Range{r.low, r.high}
+			}
+
+			total += solveTwo(c.destination, workflows, TRanges)
+		}
+
+		if F.low <= F.high {
+			if c.operand == "GOTO" {
+				continue
+			}
+
+			FRanges := make(map[string]Range)
+
+			for _, r := range ranges {
+				FRanges[string(c.operand)] = Range{r.low, r.high}
+			}
+
+			ranges[string(c.operand)] = F
+		}
+	}
+
+	return total
 }
 
 func solveOne(workflows map[string][]condition, parts []part) int {
