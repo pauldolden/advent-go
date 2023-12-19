@@ -219,6 +219,8 @@ func main() {
 		case 18:
 			fmt.Println(_2023.EighteenOne(o))
 			fmt.Println(_2023.EighteenTwo(o))
+		case 19:
+			fmt.Println(_2023.NineteenOne(o))
 		}
 
 	default:
