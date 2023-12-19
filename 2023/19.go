@@ -31,12 +31,98 @@ func NineteenOne(o config.Options) int {
 	rw := strings.Split(input[0], "\n")
 	rp := strings.Split(input[1], "\n")
 
-	workflows := processWorkflows(rw)
-	parts := processParts(rp)
+	return solve(processWorkflows(rw), processParts(rp))
+}
 
-	fmt.Println(parts, workflows)
+func solve(workflows map[string][]condition, parts []part) int {
+	var accepted []part
+	var rejected []part
 
-	return 19
+	for _, p := range parts {
+		workflow := workflows["in"]
+
+		e := evaluate(workflow, p, workflows)
+
+		if e {
+			accepted = append(accepted, p)
+		} else {
+			rejected = append(rejected, p)
+		}
+	}
+
+	total := 0
+	for _, p := range accepted {
+		total += p.x + p.m + p.a + p.s
+	}
+
+	fmt.Println("Rejected", len(rejected))
+	fmt.Println("Accepted", len(accepted))
+
+	return total
+}
+
+func evaluate(workflow []condition, p part, workflows map[string][]condition) bool {
+	for _, w := range workflow {
+		switch w.operand {
+		case "GOTO":
+			return evaluateGoto(w, workflows, p)
+
+		case "x":
+			if evaluateCondition(w.condition, p.x, w.target) {
+				return evaluateDestination(w, workflows, p)
+			}
+
+		case "m":
+			if evaluateCondition(w.condition, p.m, w.target) {
+				return evaluateDestination(w, workflows, p)
+			}
+
+		case "a":
+			if evaluateCondition(w.condition, p.a, w.target) {
+				return evaluateDestination(w, workflows, p)
+			}
+
+		case "s":
+			if evaluateCondition(w.condition, p.s, w.target) {
+				return evaluateDestination(w, workflows, p)
+			}
+		}
+	}
+	return true
+}
+
+func evaluateGoto(w condition, workflows map[string][]condition, p part) bool {
+	switch w.destination {
+	case "A":
+		return true
+	case "R":
+		return false
+	default:
+		return evaluate(workflows[w.destination], p, workflows)
+	}
+}
+
+func evaluateDestination(w condition, workflows map[string][]condition, p part) bool {
+	switch w.destination {
+	case "A":
+		return true
+	case "R":
+		return false
+	default:
+		return evaluate(workflows[w.destination], p, workflows)
+	}
+}
+
+func evaluateCondition(condition string, operand, target int) bool {
+	switch condition {
+	case "<":
+		return operand < target
+	case ">":
+		return operand > target
+	case "=":
+		return operand == target
+	}
+	return false
 }
 
 func processParts(ss []string) []part {
@@ -101,6 +187,7 @@ func processWorkflows(ss []string) map[string][]condition {
 			// if it contains a : then it's a condition otherwise it's a destination
 			if !strings.Contains(s, ":") {
 				c.operand = "GOTO"
+				c.condition = "->"
 				c.destination = s
 				conditions = append(conditions, c)
 				continue
