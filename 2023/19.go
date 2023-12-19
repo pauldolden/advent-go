@@ -62,6 +62,7 @@ func solveTwo(destination string, workflows map[string][]condition, ranges map[s
 	if destination == "R" {
 		return 0
 	}
+
 	if destination == "A" {
 		product := 1
 		for _, r := range ranges {
@@ -70,45 +71,49 @@ func solveTwo(destination string, workflows map[string][]condition, ranges map[s
 		return product
 	}
 
+	fallback := workflows[destination][len(workflows[destination])-1].destination
+	rules := workflows[destination][:len(workflows[destination])-1]
+
 	total := 0
 
-	for _, c := range workflows[destination] {
+	breakout := false
+	for _, c := range rules {
 		var T, F Range
 		hi, lo := ranges[c.operand].high, ranges[c.operand].low
 		if c.condition == "<" {
-			T = Range{lo, c.target - 1}
-			F = Range{c.target, hi}
+			T = Range{lo, min(c.target-1, hi)}
+			F = Range{max(c.target, lo), hi}
 		} else {
-			T = Range{c.target + 1, hi}
-			F = Range{lo, c.target}
+			T = Range{max(c.target+1, lo), hi}
+			F = Range{lo, min(c.target, hi)}
 		}
 
 		if T.low <= T.high {
-			if c.operand == "GOTO" {
-				continue
-			}
-
 			TRanges := make(map[string]Range)
-			for _, r := range ranges {
-				TRanges[string(c.operand)] = Range{r.low, r.high}
+			for k, v := range ranges {
+				TRanges[k] = v
 			}
+			TRanges[string(c.operand)] = T
 
 			total += solveTwo(c.destination, workflows, TRanges)
 		}
 
 		if F.low <= F.high {
-			if c.operand == "GOTO" {
-				continue
-			}
-
 			FRanges := make(map[string]Range)
 
-			for _, r := range ranges {
-				FRanges[string(c.operand)] = Range{r.low, r.high}
+			for k, v := range ranges {
+				FRanges[k] = v
 			}
 
 			ranges[string(c.operand)] = F
+		} else {
+			breakout = true
+			break
 		}
+	}
+
+	if !breakout {
+		total += solveTwo(fallback, workflows, ranges)
 	}
 
 	return total
@@ -144,9 +149,6 @@ func solveOne(workflows map[string][]condition, parts []part) int {
 func evaluate(workflow []condition, p part, workflows map[string][]condition) bool {
 	for _, w := range workflow {
 		switch w.operand {
-		case "GOTO":
-			return evaluateGoto(w, workflows, p)
-
 		case "x":
 			if evaluateCondition(w.condition, p.x, w.target) {
 				return evaluateDestination(w, workflows, p)
@@ -169,17 +171,6 @@ func evaluate(workflow []condition, p part, workflows map[string][]condition) bo
 		}
 	}
 	return true
-}
-
-func evaluateGoto(w condition, workflows map[string][]condition, p part) bool {
-	switch w.destination {
-	case "A":
-		return true
-	case "R":
-		return false
-	default:
-		return evaluate(workflows[w.destination], p, workflows)
-	}
 }
 
 func evaluateDestination(w condition, workflows map[string][]condition, p part) bool {
@@ -266,8 +257,8 @@ func processWorkflows(ss []string) map[string][]condition {
 
 			// if it contains a : then it's a condition otherwise it's a destination
 			if !strings.Contains(s, ":") {
-				c.operand = "GOTO"
-				c.condition = "->"
+				c.operand = s
+				c.condition = s
 				c.destination = s
 				conditions = append(conditions, c)
 				continue
