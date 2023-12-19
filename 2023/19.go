@@ -20,6 +20,13 @@ type condition struct {
 type part struct {
 	x, m, a, s int
 }
+type parttwo struct {
+	x, m, a, s rnge
+}
+
+type rnge struct {
+	min, max int
+}
 
 func NineteenOne(o config.Options) int {
 	bs, err := os.ReadFile("./2023/19.txt")
@@ -31,10 +38,49 @@ func NineteenOne(o config.Options) int {
 	rw := strings.Split(input[0], "\n")
 	rp := strings.Split(input[1], "\n")
 
-	return solve(processWorkflows(rw), processParts(rp))
+	return solveOne(processWorkflows(rw), processParts(rp))
 }
 
-func solve(workflows map[string][]condition, parts []part) int {
+func NineteenTwo(o config.Options) int {
+	bs, err := os.ReadFile("./2023/19.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	input := strings.Split(string(bs), "\n\n")
+	rw := strings.Split(input[0], "\n")
+
+	return solveTwo(processWorkflows(rw))
+}
+
+func solveTwo(workflows map[string][]condition) int {
+	start := workflows["in"]
+	p := parttwo{
+		x: rnge{
+			min: 1,
+			max: 4000,
+		},
+		m: rnge{
+			min: 1,
+			max: 4000,
+		},
+		a: rnge{
+			min: 1,
+			max: 4000,
+		},
+		s: rnge{
+			min: 1,
+			max: 4000,
+		},
+	}
+
+	fmt.Println(p)
+	fmt.Println(start)
+
+	return 1
+}
+
+func solveOne(workflows map[string][]condition, parts []part) int {
 	var accepted []part
 	var rejected []part
 
