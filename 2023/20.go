@@ -1,7 +1,6 @@
 package _2023
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/pauldolden/advent-go/config"
@@ -57,14 +56,21 @@ func TwentyOne(o config.Options) int {
 	lowPulseCount := 0
 	highPulseCount := 0
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 1000; i++ {
 		for _, b := range initialBroadcasts {
 			q.enqueue(b)
 		}
+		lowPulseCount += 1 // the button always starts with a low pulse
 		for len(q) > 0 {
 			bc := q.dequeue()
-			recipient := inputMap[bc.recipient]
 			sPulse := pulseMap[bc.sender]
+			recipient := inputMap[bc.recipient]
+
+			if sPulse == 0 {
+				lowPulseCount += 1
+			} else {
+				highPulseCount += 1
+			}
 
 			switch recipient.mode {
 			case "%":
@@ -76,17 +82,6 @@ func TwentyOne(o config.Options) int {
 					} else {
 						pulseMap[bc.recipient] = 0
 					}
-				}
-
-				sPulse = pulseMap[bc.recipient]
-				for _, r := range recipient.recipients {
-					fmt.Println(bc.recipient, r)
-					if sPulse == 1 {
-						highPulseCount++
-					} else {
-						lowPulseCount++
-					}
-					q.enqueue(broadcast{sender: bc.recipient, recipient: r})
 				}
 			case "&":
 				for i, input := range recipient.inputs {
@@ -105,23 +100,14 @@ func TwentyOne(o config.Options) int {
 					} else {
 						pulseMap[bc.recipient] = 1
 					}
-
-					sPulse = pulseMap[bc.recipient]
-					for _, r := range recipient.recipients {
-						if sPulse == 1 {
-							highPulseCount++
-						} else {
-							lowPulseCount++
-						}
-						q.enqueue(broadcast{sender: bc.recipient, recipient: r})
-					}
 				}
+			}
+
+			for _, r := range recipient.recipients {
+				q.enqueue(broadcast{sender: bc.recipient, recipient: r})
 			}
 		}
 	}
-
-	fmt.Println(lowPulseCount)
-	fmt.Println(highPulseCount)
 
 	return lowPulseCount * highPulseCount
 }
@@ -209,5 +195,81 @@ func parseRecipients(s string, inputMap map[string]module) {
 }
 
 func TwentyTwo(o config.Options) int {
-	return 0
+	scanner, file := utils.OpenFile(2023, 20, o)
+	defer file.Close()
+	pulseMap := make(map[string]int)
+	inputMap := make(map[string]module)
+	var initialBroadcasts []broadcast
+	states := []map[string]int{}
+
+	q := queue{}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		parseInputs(line, inputMap)
+		parseMode(line, inputMap)
+		parsePulses(line, pulseMap)
+		parseRecipients(line, inputMap)
+		b := parseBroadcast(line)
+		initialBroadcasts = append(initialBroadcasts, b...)
+	}
+
+	count := 0
+	found := false
+	for !found {
+		for _, b := range initialBroadcasts {
+			q.enqueue(b)
+		}
+		for len(q) > 0 {
+			bc := q.dequeue()
+			sPulse := pulseMap[bc.sender]
+			recipient := inputMap[bc.recipient]
+
+			if sPulse == 0 && bc.recipient == "rx" {
+				found = true
+				break
+			}
+
+			switch recipient.mode {
+			case "%":
+				if sPulse == 1 {
+					continue
+				} else {
+					if pulseMap[bc.recipient] == 0 {
+						pulseMap[bc.recipient] = 1
+					} else {
+						pulseMap[bc.recipient] = 0
+					}
+				}
+			case "&":
+				for i, input := range recipient.inputs {
+					if input.name == bc.sender {
+						recipient.inputs[i].lastPulse = sPulse
+					}
+
+					allHigh := true
+					for _, input := range recipient.inputs {
+						if input.lastPulse == 0 {
+							allHigh = false
+							break
+						}
+					}
+					if allHigh {
+						pulseMap[bc.recipient] = 0
+					} else {
+						pulseMap[bc.recipient] = 1
+					}
+				}
+			}
+
+			for _, r := range recipient.recipients {
+				q.enqueue(broadcast{sender: bc.recipient, recipient: r})
+			}
+		}
+		states = append(states, pulseMap)
+
+		count += 1
+	}
+
+	return count
 }
