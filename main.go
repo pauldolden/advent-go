@@ -6,7 +6,9 @@ import (
 
 	_2015 "github.com/pauldolden/advent-go/2015"
 	_2016 "github.com/pauldolden/advent-go/2016"
+	_2020 "github.com/pauldolden/advent-go/2020"
 	_2023 "github.com/pauldolden/advent-go/2023"
+	_2024 "github.com/pauldolden/advent-go/2024"
 	"github.com/pauldolden/advent-go/config"
 )
 
@@ -177,6 +179,12 @@ func main() {
 		default:
 			fmt.Println("Day not implemented")
 		}
+	case 2020:
+		switch *day {
+		case 1:
+			fmt.Println(_2020.OneOne(o))
+			fmt.Println(_2020.OneTwo(o))
+		}
 	case 2023:
 		switch *day {
 		case 1:
@@ -225,6 +233,15 @@ func main() {
 		case 20:
 			fmt.Println(_2023.TwentyOne(o))
 			fmt.Println(_2023.TwentyTwo(o))
+		case 21:
+			fmt.Println(_2023.TwentyOneOne(o))
+			fmt.Println(_2023.TwentyOneTwo(o))
+		}
+	case 2024:
+		switch *day {
+		case 1:
+			fmt.Println(_2024.OneOne(o))
+			fmt.Println(_2024.OneTwo(o))
 		}
 
 	default:

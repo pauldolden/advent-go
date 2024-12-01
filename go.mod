@@ -1,6 +1,6 @@
 module github.com/pauldolden/advent-go
 
-go 1.21
+go 1.22
 
 require (
 	github.com/samber/lo v1.39.0
